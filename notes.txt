@@ -1,0 +1,12 @@
+composer create-project laravel/laravel laravel-Real-Estate
+
+configure .env file And create database and migrate it.
+
+composer require laravel/ui
+
+php artisan ui bootstrap --auth
+
+npm install && npm run dev
+
+php artisan migrate
+
