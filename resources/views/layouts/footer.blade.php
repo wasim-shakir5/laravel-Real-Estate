@@ -69,7 +69,6 @@
     </div>
 </footer>
 
-<script src="{{ asset('asset_fo/js/jquery-3.3.1.min.js') }}"></script>
 <script src="{{ asset('asset_fo/js/jquery-migrate-3.0.1.min.js') }}"></script>
 <script src="{{ asset('asset_fo/js/jquery-ui.js') }}"></script>
 <script src="{{ asset('asset_fo/js/popper.min.js') }}"></script>

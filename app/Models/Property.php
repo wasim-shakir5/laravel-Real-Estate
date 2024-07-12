@@ -19,6 +19,7 @@ class Property extends Model
         'baths',
         'sq_ft',
         'home_type',
+        'type',
         'year_built',
         'price_sqft',
         'more_info',
@@ -27,4 +28,14 @@ class Property extends Model
     ];
 
     public $timestamps = true;
+
+    public function images()
+    {
+        return $this->hasMany(PropertyImages::class, 'property_id');
+    }
+
+    public function contactAgent()
+    {
+        return $this->hasMany(ContactAgent::class, 'property_id');
+    }
 }

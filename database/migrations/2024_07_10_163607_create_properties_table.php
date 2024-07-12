@@ -20,6 +20,7 @@ return new class extends Migration
             $table->smallInteger('baths')->nullable()->default(2);
             $table->string('sq_ft')->nullable();
             $table->enum('home_type', ['Home', 'Mansion', 'Palace'])->default('Home');
+            $table->enum('type', ['Sale', 'Lease', 'Rent'])->default('Rent');
             $table->integer('year_built')->nullable()->default(2000);
             $table->string('price_sqft')->nullable()->default('9999');
             $table->string('more_info', 512)->nullable();

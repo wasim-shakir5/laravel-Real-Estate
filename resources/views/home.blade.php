@@ -23,7 +23,7 @@
             <div class="row align-items-center justify-content-center text-center">
                 <div class="col-md-10">
                     <span class="d-inline-block bg-success text-white px-3 mb-3 property-offer-type rounded">For
-                        Rent</span>
+                        {{ $prop->type }}</span>
                         <h1 class="mb-2">{{ $prop->title }}</h1>
                         <p class="mb-5"><strong class="h2 text-success font-weight-bold">${{ $prop->price }}</strong></p>
                         <p><a href="{{ route('single.prop', $prop->id) }}" class="btn btn-white btn-outline-white py-3 px-5 rounded-0 btn-2">See
@@ -34,7 +34,6 @@
             </div>
         </div>
         @endforeach
-
     </div>
 
     <div class="site-section site-section-sm pb-0">
@@ -125,15 +124,23 @@
 
                 <div class="col-md-6 col-lg-4 mb-4">
                     <div class="property-entry h-100">
-                        <a href="property-details.html" class="property-thumbnail">
+                        <a href="{{ route('single.prop', $prop->id) }}" class="property-thumbnail">
                             <div class="offer-type-wrap">
-                                <span class="offer-type bg-danger">Sale</span>
+                                <span class="offer-type bg-danger">{{ $prop->type }}</span>
                                 <span class="offer-type bg-success">{{ $prop->home_type }}</span>
                             </div>
                             <img src="{{ asset('asset_fo/images/' . $prop->image) }}" alt="Image not found - {{ $prop->image }}" class="img-fluid">
                         </a>
                         <div class="p-4 property-body">
-                            <a href="{{ route('single.prop', $prop->id) }}" class="property-favorite"><span class="icon-heart-o"></span></a>
+                            <a href="#" class="property-favorite save-{{ $prop->id }} save-property" data-property-id="{{ $prop->id }}"><span class="icon-heart-o"></span></a>
+                            <a href="#" class="property-favorite unsave-property unsave-{{ $prop->id }}" data-property-id="{{ $prop->id }}" style="display: none;">
+                                <span class="icon-heart-o"></span></a>
+
+        {{--
+            <button class="btn btn-primary save-property" data-property-id="{{ $property->id }}">Save</button>
+            <button class="btn btn-danger unsave-property" data-property-id="{{ $property->id }}" style="display: none;">Unsave</button>
+        --}}
+
                             <h2 class="property-title"><a href="property-details.html">{{ $prop->title }}</a></h2>
                             <span class="property-location d-block mb-3"><span class="property-icon icon-room"></span>
                                 {{ $prop->location }}</span>

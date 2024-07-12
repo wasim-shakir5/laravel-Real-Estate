@@ -30,10 +30,10 @@
     <link rel="stylesheet" href="{{ asset('asset_fo/css/fl-bigmug-line.css') }}">
     <link rel="stylesheet" href="{{ asset('asset_fo/css/aos.css') }}">
     <link rel="stylesheet" href="{{ asset('asset_fo/css/style.css') }}">
+    <script src="{{ asset('asset_fo/js/jquery-3.3.1.min.js') }}"></script>
 
     <!-- Scripts -->
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
 </head>
 
 <body>
- 

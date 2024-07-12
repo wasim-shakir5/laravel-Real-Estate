@@ -10,3 +10,6 @@ npm install && npm run dev
 
 php artisan migrate
 
+php artisan make:migration create_contact_agent_table --create=contact_agent
+
+php artisan make:model UserProperty -m
