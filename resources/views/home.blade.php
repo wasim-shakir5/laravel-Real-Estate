@@ -132,16 +132,13 @@
                             <img src="{{ asset('asset_fo/images/' . $prop->image) }}" alt="Image not found - {{ $prop->image }}" class="img-fluid">
                         </a>
                         <div class="p-4 property-body">
-                            <a href="#" class="property-favorite save-{{ $prop->id }} save-property" data-property-id="{{ $prop->id }}"><span class="icon-heart-o"></span></a>
-                            <a href="#" class="property-favorite unsave-property unsave-{{ $prop->id }}" data-property-id="{{ $prop->id }}" style="display: none;">
-                                <span class="icon-heart-o"></span></a>
+                            @php $is_saved = in_array($prop->id, $saved_properties); @endphp
+                            <a href="#" id="save-property-btn-{{ $prop->id }}" class="property-favorite save-property" data-property-id="{{ $prop->id }}">
+                                <span class="{{ $is_saved ? 'icon-heart' : 'icon-heart-o' }}"></span>
+                            </a>
 
-        {{--
-            <button class="btn btn-primary save-property" data-property-id="{{ $property->id }}">Save</button>
-            <button class="btn btn-danger unsave-property" data-property-id="{{ $property->id }}" style="display: none;">Unsave</button>
-        --}}
 
-                            <h2 class="property-title"><a href="property-details.html">{{ $prop->title }}</a></h2>
+                            <h2 class="property-title"><a href="{{ route('single.prop', $prop->id) }}">{{ $prop->title }}</a></h2>
                             <span class="property-location d-block mb-3"><span class="property-icon icon-room"></span>
                                 {{ $prop->location }}</span>
                             <strong class="property-price text-primary mb-3 d-block text-success">${{ $prop->price }}</strong>
@@ -169,6 +166,43 @@
             </div>
         </div>
     </div>
+
+    <script>
+        $(document).ready(function() {
+            $('.save-property').on('click', function(e) {
+                e.preventDefault();
+                var button = $(this);
+                var propertyId = button.data('property-id');
+                $.ajax({
+                    headers: { 'cache-control': 'no-cache' },
+                    cache: false,
+                    async: true,
+                    url: "{{ route('property.saver') }}",
+                    method: 'POST',
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        property_id: propertyId,
+                    },
+                    success: function(response) {
+                        if (response.status === 'success') {
+                            button.find('span').toggleClass('icon-heart-o icon-heart');
+                            showAlert(response.message, response.action === 'saved' ? 'success' : 'danger');
+                        } else {
+                            showAlert(response.message, 'danger');
+                        }
+                    }
+                });
+            });
+
+            function showAlert(message, type) {
+                var alert = $('<div class="alert alert-' + type + ' alert-dismissible fade show" role="alert">' + message + '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');
+                $('.alert-container').append(alert);
+                setTimeout(function() {
+                    alert.alert('close');
+                }, 2000);
+            }
+        });
+    </script>
 
     @include('layouts.home.why-choose-us')
     @include('layouts.home.recent-blog')

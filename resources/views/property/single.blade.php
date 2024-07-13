@@ -151,18 +151,22 @@
 
                     </div>
 
-                    <div class="bg-white widget border rounded">
-                        <h3 class="h4 text-black widget-title mb-3 ml-0 text-center">Share</h3>
-                        <div class="px-3" style="margin-left: -15px;">
+                    <div class="bg-white widget border rounded text-center">
+                        <h3 class="h4 text-black widget-title mb-3 text-center">Save Property</h3>
+                        <button id="save-property-btn-{{ $property->id }}" class="btn btn-primary save-property" data-property-id="{{ $property->id }}">
+                            {{ $is_saved ? 'Property Saved. Click to Unsave' : 'Save this Property' }}
+                        </button>
+                    </div>
+
+                    <div class="bg-white widget border rounded text-center">
+                        <h3 class="h4 text-black widget-title mb-3 ml-0">Share</h3>
+                        <div class="px-3">
                             <a href="https://www.facebook.com/sharer/sharer.php?u={{ urlencode($property_url) }}&quote={{ urlencode($property->title) }}"
                                 class="pt-3 pb-3 pr-3 pl-0"><span class="icon-facebook"></span></a>
                             <a href="https://twitter.com/intent/tweet?text={{ urlencode($property->title) }}&url={{ urlencode($property_url) }}"
                                 class="pt-3 pb-3 pr-3 pl-0"><span class="icon-twitter"></span></a>
                             <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ urlencode($property_url) }}"
                                 class="pt-3 pb-3 pr-3 pl-0"><span class="icon-linkedin"></span></a>
-
-                                <button class="btn btn-primary save-{{ $property->id }} save-property" data-property-id="{{ $property->id }}">Save</button>
-                                <button class="btn btn-danger unsave-{{ $property->id }} unsave-property" data-property-id="{{ $property->id }}" style="display: none;">Unsave</button>
                         </div>
                     </div>
 
@@ -230,6 +234,41 @@
         </div>
     @endif
 
+    <script>
+        $(document).ready(function() {
+            $('.save-property').on('click', function(e) {
+                e.preventDefault();
+                var button = $(this);
+                var propertyId = button.data('property-id');
+                $.ajax({
+                    headers: { 'cache-control': 'no-cache' },
+                    url: "{{ route('property.saver') }}",
+                    method: 'POST',
+                    async: true,
+                    cache: false,
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        property_id: propertyId,
+                    },
+                    success: function(response) {
+                        if (response.status === 'success') {
+                            button.text(response.action === 'saved' ? 'Property Saved. Click to Unsave' : 'Save This Property');
+                            showAlert(response.message, response.action === 'saved' ? 'success' : 'danger');
+                        } else {
+                            showAlert(response.message, 'danger');
+                        }
+                    }
+                });
+            });
 
+            function showAlert(message, type) {
+                var alert = $('<div class="alert alert-' + type + ' alert-dismissible fade show" role="alert">' + message + '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');
+                $('.alert-container').append(alert);
+                setTimeout(function() {
+                    alert.alert('close');
+                }, 2000);
+            }
+        });
+    </script>
 
 @endsection

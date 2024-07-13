@@ -17,18 +17,18 @@
                         <li class="active">
                             <a href="{{ url('/') }}">Home</a>
                         </li>
-                        <li><a href="buy.html">Buy</a></li>
-                        <li><a href="rent.html">Rent</a></li>
+                        <li><a href="{{ route('property.type', 'Sale') }}">Sale</a></li>
+                        <li><a href="{{ route('property.type', 'Rent') }}">Rent</a></li>
                         <li class="has-children">
-                            <a href="properties.html">Properties</a>
+                            <a href="#">Properties</a>
                             <ul class="dropdown arrow-top">
-                                <li><a href="#">Condo</a></li>
-                                <li><a href="#">Property Land</a></li>
-                                <li><a href="#">Commercial Building</a></li>
+                                <li><a href="{{ route('property.hometype', 'Palace') }}">Palace</a></li>
+                                <li><a href="{{ route('property.hometype', 'Mansion') }}">Mansion</a></li>
+                                <li><a href="{{ route('property.hometype', 'Home') }}">Home</a></li>
                             </ul>
                         </li>
-                        <li><a href="about.html">About</a></li>
-                        <li><a href="contact.html">Contact</a></li>
+                        <li><a href="{{ route('about') }}">About</a></li>
+                        <li><a href="{{ route('contact') }}">Contact</a></li>
                         @guest
                             @if (Route::has('login'))
                                 <li><a href="{{ route('login') }}">Login</a></li>

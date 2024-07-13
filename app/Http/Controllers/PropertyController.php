@@ -13,8 +13,10 @@ class PropertyController extends Controller
 {
     public function index()
     {
+        $userId = Auth::id();
         $properties = Property::select()->take(9)->orderBy('created_at', 'desc')->get();
-        return view('home', compact('properties'));
+        $saved_properties = UserProperty::where('user_id', $userId)->pluck('property_id')->toArray();
+        return view('home', compact('properties', 'saved_properties'));
     }
 
     public function single($id)
@@ -38,7 +40,9 @@ class PropertyController extends Controller
         $submission_count = ContactAgent::where('property_id', $id)->where('user_id', Auth::user()->id)
             ->count();
 
-        return view('property.single', compact('property', 'gallery', 'others', 'related_properties', 'property_url', 'submission_count'));
+        $is_saved = UserProperty::where('property_id', $id)->where('user_id', Auth::user()->id)->exists();
+
+        return view('property.single', compact('property', 'gallery', 'others', 'related_properties', 'property_url', 'submission_count', 'is_saved'));
     }
 
     public function saveProperty(Request $request)
@@ -46,28 +50,41 @@ class PropertyController extends Controller
         $propertyId = $request->property_id;
         $userId = Auth::id();
 
-        // Check if the property is already saved
         $savedProperty = UserProperty::where('user_id', $userId)->where('property_id', $propertyId)->first();
 
-        if (!$savedProperty) {
+        if ($savedProperty) {
+            $savedProperty->delete();
+            return response()->json(['status' => 'success', 'action' => 'unsaved', 'message' => 'Property removed successfully']);
+        } else {
             UserProperty::create([
                 'user_id' => $userId,
                 'property_id' => $propertyId,
             ]);
-
-            return response()->json(['status' => 'success', 'message' => 'Property saved successfully']);
-        } else {
-            return response()->json(['status' => 'error', 'message' => 'Property already saved']);
+            return response()->json(['status' => 'success', 'action' => 'saved', 'message' => 'Property saved successfully']);
         }
     }
 
-    public function unsaveProperty(Request $request)
+    public function showByType($type)
     {
-        $propertyId = $request->property_id;
-        $userId = Auth::id();
+        if (!in_array($type, ['Rent', 'Sale'])) {
+            return redirect()->route('home')
+            ->with('error_invalid_type', "We don't have the type, you're looking for or you might have mispelled it. Please Double Check it!");
+        }
+        $properties = Property::where('type', $type)->orderBy('created_at', 'desc')->take(9)->get();
+        $saved_properties = UserProperty::where('user_id', Auth::user()->id)->pluck('property_id')->toArray();
 
-        UserProperty::where('user_id', $userId)->where('property_id', $propertyId)->delete();
+        return view('home', compact('properties', 'saved_properties', 'type'));
+    }
 
-        return response()->json(['status' => 'success', 'message' => 'Property removed successfully']);
+    public function showByHomeType($type)
+    {
+        if (!in_array($type, ['Palace', 'Mansion', 'Home'])) {
+            return redirect()->route('home')
+            ->with('error_invalid_hometype', "We don't have the type, you're looking for or you might have mispelled it. Please Double Check it!");
+        }
+        $properties = Property::where('home_type', $type)->orderBy('created_at', 'DESC')->take(9)->get();
+        $saved_properties = UserProperty::where('user_id', Auth::user()->id)->pluck('property_id')->toArray();
+
+        return view('home', compact('properties', 'saved_properties', 'type'));
     }
 }

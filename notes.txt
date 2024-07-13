@@ -13,3 +13,11 @@ php artisan migrate
 php artisan make:migration create_contact_agent_table --create=contact_agent
 
 php artisan make:model UserProperty -m
+
+composer require google/recaptcha -> not used
+
+https://www.itsolutionstuff.com/post/laravel-11-google-recaptcha-v3-validation-tutorialexample.html
+
+php artisan make:rule ReCaptcha
+
+composer require intervention/image

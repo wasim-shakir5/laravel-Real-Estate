@@ -3,6 +3,8 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PropertyController;
 use App\Http\Controllers\PropertyAgentController;
+use App\Http\Controllers\CommonController;
+
 
 Route::get('/', function () {
     return redirect('/home');
@@ -18,6 +20,10 @@ Route::post('/home/contact-agent', [PropertyAgentController::class, 'submit'])->
 
 // routes/web.php
 
-Route::post('/property/save', [PropertyController::class, 'saveProperty'])->name('property.save');
-Route::post('/property/unsave', [PropertyController::class, 'unsaveProperty'])->name('property.unsave');
+Route::post('/property/save', [PropertyController::class, 'saveProperty'])->name('property.saver');
+Route::get('/home/type/{type}', [PropertyController::class, 'showByType'])->name('property.type');
+Route::get('/home/home-type/{hometype}', [PropertyController::class, 'showByHomeType'])->name('property.hometype');
 
+// pages
+Route::match(['GET', 'POST'], '/contact', [CommonController::class, 'contact'])->name('contact');
+Route::get('/about-us', [CommonController::class, 'about'])->name('about');
