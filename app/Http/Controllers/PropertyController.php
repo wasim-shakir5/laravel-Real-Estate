@@ -6,7 +6,6 @@ use App\Models\Property;
 use App\Models\ContactAgent;
 use App\Models\UserProperty;
 use Illuminate\Http\Request;
-use App\Models\PropertyImages;
 use Illuminate\Support\Facades\Auth;
 
 class PropertyController extends Controller
@@ -19,11 +18,55 @@ class PropertyController extends Controller
         return view('home', compact('properties', 'saved_properties'));
     }
 
+    public function filterProperties(Request $request)
+    {
+        $query = Property::query();
+        $userId = Auth::id();
+
+        if ($request->filled('list_type')) {
+            $query->where('home_type', $request->list_type);
+        }
+
+        if ($request->filled('offer_type')) {
+            $query->where('type', $request->offer_type);
+        }
+
+        if ($request->filled('city')) {
+            $bedsRange = explode('-', $request->city);
+            if (count($bedsRange) == 1) {
+                $query->where('beds', $bedsRange[0]);
+            } else {
+                $query->whereBetween('beds', [$bedsRange[0], $bedsRange[1]]);
+            }
+        }
+
+        if ($request->filled('type') && $request->type !== 'all') {
+            $query->where('type', $request->type);
+        }
+
+        if ($request->filled('sort')) {
+            if ($request->sort === 'price_asc') {
+                $query->orderBy('price', 'asc');
+            } elseif ($request->sort === 'price_desc') {
+                $query->orderBy('price', 'desc');
+            }
+        }
+
+        $properties = $query->get();
+        $saved_properties = UserProperty::where('user_id', $userId)->pluck('property_id')->toArray();
+
+        return response()->json([
+            'html' => view('property.property_list', compact('properties', 'saved_properties'))->render()
+        ]);
+    }
+
     public function single($id)
     {
         $property = Property::with('images')->find($id);
+        $user_id = Auth::check() ? Auth::id() : 0;
+
         if (!$property) {
-            return redirect()->route('home')->with('error_id_not_found', 'You dont have the id');
+            return redirect()->route('home')->with('error_id_not_found', 'Property Doesnt Exists!');
         }
 
         // Related property
@@ -37,12 +80,12 @@ class PropertyController extends Controller
         $property_url = route('single.prop', ['id' => $property->id]);
 
         // count to 3 and then stop user to give request
-        $submission_count = ContactAgent::where('property_id', $id)->where('user_id', Auth::user()->id)
+        $submission_count = ContactAgent::where('property_id', $id)->where('user_id', $user_id)
             ->count();
 
-        $is_saved = UserProperty::where('property_id', $id)->where('user_id', Auth::user()->id)->exists();
+        $is_saved = UserProperty::where('property_id', $id)->where('user_id', $user_id)->exists();
 
-        return view('property.single', compact('property', 'gallery', 'others', 'related_properties', 'property_url', 'submission_count', 'is_saved'));
+        return view('property.single', compact('property', 'gallery', 'others', 'related_properties', 'property_url', 'submission_count', 'is_saved', 'user_id'));
     }
 
     public function saveProperty(Request $request)

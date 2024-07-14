@@ -86,7 +86,11 @@
                 <div class="col-lg-4">
 
                     <div class="bg-white widget border rounded">
-
+                        @if (!$user_id)
+                            <div class="alert alert-danger" role="alert">
+                                Please Login to Contact the Agent of this Property. Also, You can able to Save this property for future uses.
+                            </div>
+                        @else
                         <h3 class="h4 text-black widget-title mb-3 text-center">Contact Agent</h3>
                             @if (session('request_success'))
 
@@ -97,7 +101,7 @@
                             @csrf
                             <input type="hidden" value="{{ $property->id }}" name="property_id" />
                             <input type="hidden" value="{{ $property->agent_name }}" name="agent_name" />
-                            <input type="hidden" value="{{ Auth::user()->id }}" name="user_id" />
+                            <input type="hidden" value="{{ $user_id }}" name="user_id" />
 
                             <div class="form-group">
                                 <label for="name">Name</label>
@@ -139,7 +143,7 @@
                             </div>
                         </form>
                         @if ($submission_count > 0)
-                            <div class="alert alert-warning">
+                            <div class="alert alert-warning" role="alert">
                                 You have {{ 3 - $submission_count }} more {{ Str::plural('request', 3 - $submission_count) }} to send.
                             </div>
                         @endif
@@ -156,6 +160,9 @@
                         <button id="save-property-btn-{{ $property->id }}" class="btn btn-primary save-property" data-property-id="{{ $property->id }}">
                             {{ $is_saved ? 'Property Saved. Click to Unsave' : 'Save this Property' }}
                         </button>
+
+                        @endif
+
                     </div>
 
                     <div class="bg-white widget border rounded text-center">

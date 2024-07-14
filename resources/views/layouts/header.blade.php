@@ -14,47 +14,65 @@
                                 class="icon-menu h3"></span></a></div>
 
                     <ul class="site-menu js-clone-nav d-none d-lg-block">
-                        <li class="active">
+                        <li class="{{ Request::is('/')? 'active' : '' }}">
                             <a href="{{ url('/') }}">Home</a>
                         </li>
-                        <li><a href="{{ route('property.type', 'Sale') }}">Sale</a></li>
-                        <li><a href="{{ route('property.type', 'Rent') }}">Rent</a></li>
-                        <li class="has-children">
-                            <a href="#">Properties</a>
-                            <ul class="dropdown arrow-top">
-                                <li><a href="{{ route('property.hometype', 'Palace') }}">Palace</a></li>
-                                <li><a href="{{ route('property.hometype', 'Mansion') }}">Mansion</a></li>
-                                <li><a href="{{ route('property.hometype', 'Home') }}">Home</a></li>
-                            </ul>
+                        @if (Auth::check())
+                            <li class="{{ Request::is('property/type/Sale')? 'active' : '' }}">
+                                <a href="{{ route('property.type', 'Sale') }}">Sale</a>
+                            </li>
+                            <li class="{{ Request::is('property/type/Rent')? 'active' : '' }}">
+                                <a href="{{ route('property.type', 'Rent') }}">Rent</a>
+                            </li>
+                            <li class="has-children {{ Request::is('property/home-type/*')? 'active' : '' }}">
+                                <a href="#">Properties</a>
+                                <ul class="dropdown arrow-top">
+                                    <li class="{{ Request::is('property/home-type/Palace')? 'active' : '' }}">
+                                        <a href="{{ route('property.hometype', 'Palace') }}">Palace</a>
+                                    </li>
+                                    <li class="{{ Request::is('property/home-type/Mansion')? 'active' : '' }}">
+                                        <a href="{{ route('property.hometype', 'Mansion') }}">Mansion</a>
+                                    </li>
+                                    <li class="{{ Request::is('property/home-type/Home')? 'active' : '' }}">
+                                        <a href="{{ route('property.hometype', 'Home') }}">Home</a>
+                                    </li>
+                                </ul>
+                            </li>
+                        @endif
+                        <li class="{{ Request::is('about-us')? 'active' : '' }}">
+                            <a href="{{ route('about') }}">About</a>
                         </li>
-                        <li><a href="{{ route('about') }}">About</a></li>
-                        <li><a href="{{ route('contact') }}">Contact</a></li>
+                        <li class="{{ Request::is('contact')? 'active' : '' }}">
+                            <a href="{{ route('contact') }}">Contact</a>
+                        </li>
                         @guest
                             @if (Route::has('login'))
-                                <li><a href="{{ route('login') }}">Login</a></li>
+                                <li class="{{ Request::is('login')? 'active' : '' }}">
+                                    <a href="{{ route('login') }}">Login</a>
+                                </li>
                             @endif
 
                             @if (Route::has('register'))
-                                <li><a href="{{ route('register') }}">Register</a></li>
+                                <li class="{{ Request::is('register')? 'active' : '' }}">
+                                    <a href="{{ route('register') }}">Register</a>
+                                </li>
                             @endif
                         @else
-                            <li class="nav-item dropdown">
-                                <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#"
-                                    role="button" data-bs-toggle="dropdown" aria-haspopup="true"
-                                    aria-expanded="false" v-pre>
-                                    {{ Auth::user()->name }}
-                                </a>
-                                <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                                    <a class="dropdown-item" href="{{ route('logout') }}"
-                                        onclick="event.preventDefault();
-                                                 document.getElementById('logout-form').submit();">
-                                        {{ __('Logout') }}
-                                    </a>
+                            <li class="has-children">
+                                <a href="#">{{ Auth::user()->name }}</a>
+                                <ul class="dropdown arrow-top">
+                                    <li class="{{ Request::is('/logout') ? 'active' : '' }}">
+                                        <a href="{{ route('logout') }}" onclick="event.preventDefault();
+                                                        document.getElementById('logout-form').submit();">
+                                            {{ __('Logout') }}
+                                        </a>
+                                    </li>
+
                                     <form id="logout-form" action="{{ route('logout') }}" method="POST"
                                         class="d-none">
                                         @csrf
                                     </form>
-                                </div>
+                                </ul>
                             </li>
                         @endguest
                     </ul>

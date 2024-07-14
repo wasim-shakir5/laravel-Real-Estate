@@ -1,29 +1,29 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\PropertyController;
-use App\Http\Controllers\PropertyAgentController;
-use App\Http\Controllers\CommonController;
-
-
-Route::get('/', function () {
-    return redirect('/home');
-});
+use App\Http\Controllers\{PropertyController, PropertyAgentController, CommonController, UsersController};
 
 Auth::routes();
 
-// Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-Route::get('/home', [PropertyController::class, 'index'])->name('home');
-Route::get('/home/property/{id}', [PropertyController::class, 'single'])->name('single.prop');
+Route::controller(PropertyController::class)->group(function () {
+    Route::get('/', 'index')->name('home');
+    Route::get('/properties/filter', 'filterProperties')->name('properties.filter');
+    Route::get('/property/{id}', 'single')->name('single.prop');
+    Route::post('/property/save', 'saveProperty')->name('property.saver');
+    Route::get('/property/type/{type}', 'showByType')->name('property.type');
+    Route::get('/property/home-type/{hometype}', 'showByHomeType')->name('property.hometype');
+});
 
-Route::post('/home/contact-agent', [PropertyAgentController::class, 'submit'])->name('contact.agent.submit');
+Route::controller(PropertyAgentController::class)->group(function () {
+    Route::post('/contact-agent', 'submit')->name('contact.agent.submit');
+});
 
-// routes/web.php
+Route::controller(CommonController::class)->group(function () {
+    Route::match(['GET', 'POST'], '/contact', 'contact')->name('contact');
+    Route::get('/about-us', 'about')->name('about');
+});
 
-Route::post('/property/save', [PropertyController::class, 'saveProperty'])->name('property.saver');
-Route::get('/home/type/{type}', [PropertyController::class, 'showByType'])->name('property.type');
-Route::get('/home/home-type/{hometype}', [PropertyController::class, 'showByHomeType'])->name('property.hometype');
-
-// pages
-Route::match(['GET', 'POST'], '/contact', [CommonController::class, 'contact'])->name('contact');
-Route::get('/about-us', [CommonController::class, 'about'])->name('about');
+Route::controller(UsersController::class)->group(function () {
+    Route::get('/requested-property', 'requested_property')->name('requested.property');
+    Route::get('/liked-property', 'liked_property')->name('liked.property');
+});

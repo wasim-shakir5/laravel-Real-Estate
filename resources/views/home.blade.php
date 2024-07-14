@@ -2,6 +2,10 @@
 
 @section('content')
 
+@if (session('error_id_not_found'))
+    <script>alert('{{ session('error_id_not_found') }}')</script>
+@endif
+
     {{-- <div class="card">
                 <div class="card-header">{{ __('Dashboard') }}</div>
 
@@ -39,16 +43,16 @@
     <div class="site-section site-section-sm pb-0">
         <div class="container">
             <div class="row">
-                <form class="form-search col-md-12" style="margin-top: -100px;">
-                    <div class="row  align-items-end">
+                <form class="form-search col-md-12" id="property-filter-form" style="margin-top: -100px;">
+                    <div class="row align-items-end">
                         <div class="col-md-3">
                             <label for="list-types">Listing Types</label>
                             <div class="select-wrap">
                                 <span class="icon icon-arrow_drop_down"></span>
                                 <select name="list-types" id="list-types" class="form-control d-block rounded-0">
-                                    <option value="">Condo</option>
-                                    <option value="">Commercial Building</option>
-                                    <option value="">Land Property</option>
+                                    <option value="">Select Home Type</option>
+                                    <option value="Palace">Palace</option>
+                                    <option value="Mansion">Mansion</option>
                                 </select>
                             </div>
                         </div>
@@ -57,9 +61,9 @@
                             <div class="select-wrap">
                                 <span class="icon icon-arrow_drop_down"></span>
                                 <select name="offer-types" id="offer-types" class="form-control d-block rounded-0">
-                                    <option value="">For Sale</option>
-                                    <option value="">For Rent</option>
-                                    <option value="">For Lease</option>
+                                    <option value="">Select Type</option>
+                                    <option value="Rent">Rent</option>
+                                    <option value="Sale">Sale</option>
                                 </select>
                             </div>
                         </div>
@@ -68,11 +72,11 @@
                             <div class="select-wrap">
                                 <span class="icon icon-arrow_drop_down"></span>
                                 <select name="select-city" id="select-city" class="form-control d-block rounded-0">
-                                    <option value="">New York</option>
-                                    <option value="">Brooklyn</option>
-                                    <option value="">London</option>
-                                    <option value="">Japan</option>
-                                    <option value="">Philippines</option>
+                                    <option value="">Select Beds</option>
+                                    <option value="1">1</option>
+                                    <option value="2-3">2 to 3</option>
+                                    <option value="3-5">3 to 5</option>
+                                    <option value="5-8">5 to 8</option>
                                 </select>
                             </div>
                         </div>
@@ -95,18 +99,18 @@
                         </div>
                         <div class="ml-auto d-flex align-items-center">
                             <div>
-                                <a href="#" class="view-list px-3 border-right active">All</a>
-                                <a href="#" class="view-list px-3 border-right">Rent</a>
-                                <a href="#" class="view-list px-3">Sale</a>
+                                <a href="#" class="view-list px-3 border-right active" data-filter="all">All</a>
+                                <a href="#" class="view-list px-3 border-right" data-filter="rent">Rent</a>
+                                <a href="#" class="view-list px-3" data-filter="sale">Sale</a>
                             </div>
 
 
                             <div class="select-wrap">
                                 <span class="icon icon-arrow_drop_down"></span>
-                                <select class="form-control form-control-sm d-block rounded-0">
+                                <select class="form-control form-control-sm d-block rounded-0" id="sort-by">
                                     <option value="">Sort by</option>
-                                    <option value="">Price Ascending</option>
-                                    <option value="">Price Descending</option>
+                                    <option value="price_asc">Price Ascending</option>
+                                    <option value="price_desc">Price Descending</option>
                                 </select>
                             </div>
                         </div>
@@ -119,60 +123,71 @@
 
     <div class="site-section site-section-sm bg-light">
         <div class="container">
-            <div class="row mb-5">
-                @foreach ($properties as $prop)
+            <div class="row mb-5" id="property-list">
 
-                <div class="col-md-6 col-lg-4 mb-4">
-                    <div class="property-entry h-100">
-                        <a href="{{ route('single.prop', $prop->id) }}" class="property-thumbnail">
-                            <div class="offer-type-wrap">
-                                <span class="offer-type bg-danger">{{ $prop->type }}</span>
-                                <span class="offer-type bg-success">{{ $prop->home_type }}</span>
-                            </div>
-                            <img src="{{ asset('asset_fo/images/' . $prop->image) }}" alt="Image not found - {{ $prop->image }}" class="img-fluid">
-                        </a>
-                        <div class="p-4 property-body">
-                            @php $is_saved = in_array($prop->id, $saved_properties); @endphp
-                            <a href="#" id="save-property-btn-{{ $prop->id }}" class="property-favorite save-property" data-property-id="{{ $prop->id }}">
-                                <span class="{{ $is_saved ? 'icon-heart' : 'icon-heart-o' }}"></span>
-                            </a>
-
-
-                            <h2 class="property-title"><a href="{{ route('single.prop', $prop->id) }}">{{ $prop->title }}</a></h2>
-                            <span class="property-location d-block mb-3"><span class="property-icon icon-room"></span>
-                                {{ $prop->location }}</span>
-                            <strong class="property-price text-primary mb-3 d-block text-success">${{ $prop->price }}</strong>
-                            <ul class="property-specs-wrap mb-3 mb-lg-0">
-                                <li>
-                                    <span class="property-specs">Beds</span>
-                                    <span class="property-specs-number">{{ $prop->beds }} <sup>+</sup></span>
-
-                                </li>
-                                <li>
-                                    <span class="property-specs">Baths</span>
-                                    <span class="property-specs-number">{{ $prop->baths }}</span>
-
-                                </li>
-                                <li>
-                                    <span class="property-specs">SQ FT</span>
-                                    <span class="property-specs-number">{{ $prop->sq_ft }}</span>
-
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                @endforeach
             </div>
         </div>
     </div>
 
     <script>
         $(document).ready(function() {
-            $('.save-property').on('click', function(e) {
+            function fetchProperties(filter = 'all', sort = '', listType = '', offerType = '', city = '') {
+                $.ajax({
+                    url: "{{ route('properties.filter') }}",
+                    type: "GET",
+                    data: {
+                        type: filter,
+                        sort: sort,
+                        list_type: listType,
+                        offer_type: offerType,
+                        city: city
+                    },
+                    success: function(response) {
+                        $('#property-list').html(response.html);
+                    }
+                });
+            }
+
+            $('.view-list').on('click', function(e) {
                 e.preventDefault();
+                $('.view-list').removeClass('active');
+                $(this).addClass('active');
+                let filter = $(this).data('filter');
+                let sort = $('#sort-by').val();
+                let listType = $('#list-types').val();
+                let offerType = $('#offer-types').val();
+                let city = $('#select-city').val();
+                fetchProperties(filter, sort, listType, offerType, city);
+            });
+
+            $('#sort-by').on('change', function() {
+                let sort = $(this).val();
+                let filter = $('.view-list.active').data('filter');
+                let listType = $('#list-types').val();
+                let offerType = $('#offer-types').val();
+                let city = $('#select-city').val();
+                fetchProperties(filter, sort, listType, offerType, city);
+            });
+
+            $('#property-filter-form').on('submit', function(e) {
+                e.preventDefault();
+                let listType = $('#list-types').val();
+                let offerType = $('#offer-types').val();
+                let city = $('#select-city').val();
+                let sort = $('#sort-by').val();
+                let filter = $('.view-list.active').data('filter');
+                fetchProperties(filter, sort, listType, offerType, city);
+            });
+
+            // Initial fetch
+            fetchProperties();
+        });
+
+        $(document).ready(function() {
+            $(document).on('click', '.save-property', function(e) {
+                e.preventDefault(); console.log('here')
                 var button = $(this);
-                var propertyId = button.data('property-id');
+                var propertyId = button.data('property-id'); console.log(propertyId);
                 $.ajax({
                     headers: { 'cache-control': 'no-cache' },
                     cache: false,
@@ -204,8 +219,8 @@
         });
     </script>
 
-    @include('layouts.home.why-choose-us')
-    @include('layouts.home.recent-blog')
-    @include('layouts.home.our-agents')
+    @include('pages.home.why-choose-us')
+    @include('pages.home.recent-blog')
+    @include('pages.home.our-agents')
 
 @endsection
