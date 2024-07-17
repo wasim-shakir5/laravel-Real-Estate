@@ -21,3 +21,12 @@ https://www.itsolutionstuff.com/post/laravel-11-google-recaptcha-v3-validation-t
 php artisan make:rule ReCaptcha
 
 composer require intervention/image
+
+php artisan make:middleware AdminAuth
+php artisan make:controller AdminController
+
+
+php artisan route:clear
+php artisan cache:clear
+php artisan config:clear
+php artisan view:clear

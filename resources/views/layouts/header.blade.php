@@ -61,13 +61,19 @@
                             <li class="has-children">
                                 <a href="#">{{ Auth::user()->name }}</a>
                                 <ul class="dropdown arrow-top">
+                                    <li class="{{ Request::is('/requested-property') ? 'active' : '' }}">
+                                        <a href="{{ route('requested.property') }}">Requested Property</a>
+                                    </li>
+                                    <li class="{{ Request::is('/liked-property') ? 'active' : '' }}">
+                                        <a href="{{ route('liked.property') }}">Liked Property</a>
+                                    </li>
+                                    <hr style="margin:5px 10px">
                                     <li class="{{ Request::is('/logout') ? 'active' : '' }}">
                                         <a href="{{ route('logout') }}" onclick="event.preventDefault();
                                                         document.getElementById('logout-form').submit();">
                                             {{ __('Logout') }}
                                         </a>
                                     </li>
-
                                     <form id="logout-form" action="{{ route('logout') }}" method="POST"
                                         class="d-none">
                                         @csrf

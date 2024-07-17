@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('contact_agent', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('property_id');
+            $table->unsignedBigInteger('user_id');
             $table->string('agent_name');
             $table->string('name', 30);
             $table->string('email', 50);
@@ -23,6 +24,8 @@ return new class extends Migration
 
             $table->foreign('property_id')->references('id')
                 ->on('properties')->onDelete('cascade');
+            $table->foreign('user_id')->references('id')
+                ->on('users')->onDelete('cascade');
         });
     }
 

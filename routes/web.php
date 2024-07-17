@@ -1,7 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\{PropertyController, PropertyAgentController, CommonController, UsersController};
+use App\Http\Controllers\{PropertyController, PropertyAgentController, CommonController, UsersController, AdminController};
+use App\Http\Middleware\AdminAuth;
 
 Auth::routes();
 
@@ -27,3 +28,18 @@ Route::controller(UsersController::class)->group(function () {
     Route::get('/requested-property', 'requested_property')->name('requested.property');
     Route::get('/liked-property', 'liked_property')->name('liked.property');
 });
+
+/** ----- A D M I N -------- */
+
+Route::match(['GET', 'POST'], '/admin/login', [AdminController::class, 'login'])->name('admin.login');
+
+Route::middleware(['web', AdminAuth::class])->group(function () {
+    Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
+    Route::post('/admin/logout', [AdminController::class, 'logout'])->name('admin.logout');
+
+    Route::match(['get', 'post'], '/admin/inventory/create-product', [AdminController::class, 'create'])->name('create.product');
+    Route::get('/admin/inventory/list-product', [AdminController::class, 'list'])->name('list.product');
+    Route::get('/admin/inventory/list-category', [AdminController::class, 'listCategory'])->name('list.category');
+    Route::get('/admin/inventory/list-brand', [AdminController::class, 'listBrand'])->name('list.brand');
+});
+

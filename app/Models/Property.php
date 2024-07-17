@@ -34,8 +34,13 @@ class Property extends Model
         return $this->hasMany(PropertyImages::class, 'property_id');
     }
 
-    public function contactAgent()
+    public function contactAgents()
     {
         return $this->hasMany(ContactAgent::class, 'property_id');
+    }
+
+    public function userProperties()
+    {
+        return $this->hasMany(UserProperty::class, 'property_id');
     }
 }

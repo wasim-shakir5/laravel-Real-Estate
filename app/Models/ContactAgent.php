@@ -28,4 +28,9 @@ class ContactAgent extends Model
     {
         return $this->belongsTo(Property::class, 'property_id');
     }
+
+    public function users()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 }

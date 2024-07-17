@@ -199,7 +199,7 @@
                 @foreach ($related_properties as $property)
                     <div class="col-md-6 col-lg-4 mb-4">
                         <div class="property-entry h-100">
-                            <a href="property-details.html" class="property-thumbnail">
+                            <a href="{{ route('single.prop', $property->id) }}" class="property-thumbnail">
                                 <div class="offer-type-wrap">
                                     <span class="offer-type bg-danger">{{ $property->type }}</span>
                                     <span class="offer-type bg-success">{{ $property->home_type }}</span>
@@ -208,8 +208,7 @@
                                     class="img-fluid">
                             </a>
                             <div class="p-4 property-body">
-                                <a href="#" class="property-favorite"><span class="icon-heart-o"></span></a>
-                                <h2 class="property-title"><a href="property-details.html">{{ $property->title }}</a>
+                                <h2 class="property-title"><a href="{{ route('single.prop', $property->id) }}">{{ $property->title }}</a>
                                 </h2>
                                 <span class="property-location d-block mb-3"><span class="property-icon icon-room"></span>
                                     {{ $property->location }}</span>
